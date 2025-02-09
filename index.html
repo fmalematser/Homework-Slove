@@ -7,15 +7,13 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="chatbox">
-        <div id="messages"></div>
-        <div id="input-area">
-            <textarea id="user-input" placeholder="Type your question..."></textarea>
-            <button id="send-btn">Send</button>
+    <div class="chat-container">
+        <div class="chat-box" id="chat-box">
+            <div class="message bot">Hi! I'm Homework AI. Ask me a homework question!</div>
         </div>
-        <div id="photo-upload">
-            <input type="file" id="upload-photo" accept="image/*">
-            <button id="upload-btn">Upload Photo</button>
+        <div class="input-area">
+            <input type="text" id="user-input" placeholder="Type your question..." onkeypress="handleKeyPress(event)">
+            <button onclick="sendMessage()">Send</button>
         </div>
     </div>
     <script src="scripts.js"></script>
