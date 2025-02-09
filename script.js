@@ -1,60 +1,53 @@
-document.getElementById("send-btn").addEventListener("click", function() {
-    const userInput = document.getElementById("user-input").value;
-    if (userInput) {
-        sendMessage(userInput);
-        document.getElementById("user-input").value = '';
-    }
-});
+function sendMessage() {
+    let userInput = document.getElementById("user-input").value.trim();
+    if (userInput === "") return;
 
-document.getElementById("upload-btn").addEventListener("click", function() {
-    const fileInput = document.getElementById("upload-photo");
-    const file = fileInput.files[0];
-    if (file) {
-        uploadPhoto(file);
-    }
-});
+    // Add user message
+    addMessage(userInput, "user");
 
-function sendMessage(message) {
-    const messagesDiv = document.getElementById("messages");
-    const userMessage = document.createElement("div");
-    userMessage.className = "user-message";
-    userMessage.innerText = message;
-    messagesDiv.appendChild(userMessage);
+    // Get AI response
+    let botResponse = getBotResponse(userInput);
 
-    // Call AI backend to get response (text-based question)
-    fetch('YOUR_BACKEND_URL/ask', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ question: message })
-    })
-    .then(response => response.json())
-    .then(data => {
-        const botMessage = document.createElement("div");
-        botMessage.className = "bot-message";
-        botMessage.innerText = data.answer;
-        messagesDiv.appendChild(botMessage);
-        messagesDiv.scrollTop = messagesDiv.scrollHeight;
-    });
+    // Add bot response after a short delay
+    setTimeout(() => {
+        addMessage(botResponse, "bot");
+    }, 500);
+
+    // Clear input field
+    document.getElementById("user-input").value = "";
 }
 
-function uploadPhoto(file) {
-    const formData = new FormData();
-    formData.append("photo", file);
+function addMessage(text, sender) {
+    let chatBox = document.getElementById("chat-box");
+    let messageDiv = document.createElement("div");
+    messageDiv.classList.add("message", sender);
+    messageDiv.innerText = text;
+    chatBox.appendChild(messageDiv);
 
-    // Call backend to process image (OCR)
-    fetch('YOUR_BACKEND_URL/solve', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        const messagesDiv = document.getElementById("messages");
-        const botMessage = document.createElement("div");
-        botMessage.className = "bot-message";
-        botMessage.innerText = data.solution;
-        messagesDiv.appendChild(botMessage);
-        messagesDiv.scrollTop = messagesDiv.scrollHeight;
-    });
+    // Scroll chat to the bottom
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+function getBotResponse(input) {
+    input = input.toLowerCase();
+
+    // Simple responses
+    let responses = {
+        "hi": "Hello! How can I help with your homework?",
+        "hello": "Hi there! What do you need help with?",
+        "what is 2 + 2": "2 + 2 is 4.",
+        "who discovered gravity": "Gravity was discovered by Isaac Newton.",
+        "thank you": "You're welcome! 😊",
+        "bye": "Goodbye! Have a great day!"
+    };
+
+    // Default response if no match
+    return responses[input] || "I'm not sure. Try rephrasing your question.";
+}
+
+// Allow pressing Enter to send message
+function handleKeyPress(event) {
+    if (event.key === "Enter") {
+        sendMessage();
+    }
 }
